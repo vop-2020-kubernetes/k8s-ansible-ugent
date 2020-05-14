@@ -1,0 +1,5 @@
+- name: Install ha
+  import_tasks: install.yml
+
+- name: Configure ha
+  import_tasks: configure.yml

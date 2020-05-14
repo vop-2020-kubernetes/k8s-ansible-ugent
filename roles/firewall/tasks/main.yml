@@ -1,0 +1,29 @@
+- name: disable ufw
+  command: ufw disable
+
+- command: ufw --force reset
+
+- command: ufw allow ssh
+
+- command: ufw allow to any port 6443
+
+- command: ufw allow in on public to any port 80
+
+- command: ufw allow in on public to any port 443
+
+- command: ufw allow in on public to any port 8080
+
+- command: ufw allow in on public to any port 8443
+
+- command: ufw allow in on private from 192.168.0.0/24
+
+- command: ufw allow in on management
+
+- command: ufw deny in on public
+
+- command: ufw deny in on private
+
+- command: ufw --force enable
+
+- command: systemctl enable ufw
+

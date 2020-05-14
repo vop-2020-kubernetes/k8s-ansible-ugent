@@ -1,0 +1,17 @@
+---
+- name: Disable system swap
+  shell: "swapoff -a"
+
+- name: Remove current swaps from fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: '(?i)^([^#][\S]+\s+(none|swap)\s+swap.*)'
+    line: '# \1'
+    backrefs: yes
+    state: present
+
+- name: Disable swappiness and pass bridged IPv4 traffic to iptable's chains
+  sysctl:
+    name: "vm.swappiness"
+    value: "0"
+    state: present

@@ -1,0 +1,23 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: {{ internal_dns }}:6443
+    token: <INSERT TOKEN>
+    unsafeSkipCAVerification: true
+{% if is_master %}
+controlPlane:
+  localAPIEndpoint:
+    advertiseAddress: {{ node_ip }}
+    bindPort: 6443
+{% endif %}
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: {{ node_ip }}
+  criSocket: /var/run/dockershim.sock
+  name: {{ node_hostname }}
+{% if is_master %}
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+{% endif %}

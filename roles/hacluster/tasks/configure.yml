@@ -1,0 +1,73 @@
+- name: Set corosync servers fact
+  set_fact:
+    corosync_servers: "{{ groups['master'] }}"
+  run_once: true
+
+- name: Master > Check if corosync-key exists
+  stat:
+    path: /etc/corosync/authkey
+  register: corosync_key_file
+  when: (inventory_hostname == corosync_servers[0])
+
+- name: Master > Generate corosync-key
+  command: corosync-keygen
+  when:
+  - inventory_hostname == corosync_servers[0]
+  - corosync_key_file.stat.exists == False
+
+- name: Master > Get corosync-key
+  slurp:
+    src: /etc/corosync/authkey
+  register: corosync_key
+  when: (inventory_hostname == corosync_servers[0])
+
+- name: Update corosync-key
+  copy:
+    content: "{{ hostvars[corosync_servers[0]]['corosync_key'] }}"
+    dest: /etc/corosync/authkey
+
+- name: Create corosync config file
+  template:
+    src: corosync.conf.j2
+    dest: /etc/corosync/corosync.conf
+
+- name: Overwrite Route file
+  copy:
+    src: files/Route
+    dest: /usr/lib/ocf/resource.d/heartbeat/Route
+
+- name: Restart pacemaker
+  service:
+    name: pacemaker
+    state: restarted
+
+- name: Restart corosync
+  service:
+    name: corosync
+    state: restarted
+
+- name: Wait for all crm nodes to be online
+  shell: corosync-cfgtool -s
+  register: result
+  until: result.stdout.find("active with no faults") != -1
+  retries: 5
+  delay: 10
+
+- name: Template cluster_config.conf
+  template:
+    src: cluster_config.conf
+    dest: /tmp/cluster_config.conf
+
+- name: Replace crm configuration
+  command: crm -F configure load replace /tmp/cluster_config.conf
+  run_once: True
+
+- command: crm -F configure property stonith-enabled=no
+  run_once: True
+
+- command: crm -F configure property default-resource-stickiness=100
+  run_once: True
+
+- command: crm -F configure property start-failure-is-fatal=false
+  run_once: True
+

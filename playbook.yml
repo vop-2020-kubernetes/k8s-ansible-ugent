@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  roles:
+   - common
+   - role: hacluster
+     when: "'master' in group_names"
+   - docker
+   - kubeadm

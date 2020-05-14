@@ -1,0 +1,46 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+totem {
+    version: 2
+    cluster_name: ha_cluster
+    token: 3000
+    token_retransmits_before_loss_const: 10
+    clear_node_high_bit: yes
+    crypto_cipher: aes256
+    crypto_hash: sha256
+    interface {
+        ringnumber: 0
+        bindnetaddr: {{ ha_bind_addr }}
+        mcastport: 5405
+        ttl: 1
+    }
+}
+
+logging {
+    fileline: off
+    to_stderr: no
+    to_logfile: yes
+    logfile: /var/log/corosync/corosync.log
+    to_syslog: yes
+    syslog_facility: daemon
+    debug: off
+    timestamp: on
+    logger_subsys {
+        subsys: QUORUM
+        debug: off
+    }
+}
+
+quorum {
+    provider: corosync_votequorum
+}
+
+nodelist {
+    {% for node in ha_nodes %}
+    node {
+	nodeid: {{ node.id }}
+        ring0_addr: {{ node.addr }}
+    }
+    {% endfor %}
+}
+

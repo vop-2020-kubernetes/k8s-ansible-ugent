@@ -1,0 +1,22 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kubernetesVersion: v1.18.0
+kind: ClusterConfiguration
+imageRepository: k8s.gcr.io
+apiServer:
+  certSANs:
+  - "{{ internal_dns }}"
+  - "{{ external_dns }}"
+  extraArgs:
+    authorization-mode: Node,RBAC
+  timeoutForControlPlane: 4m0s
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controlPlaneEndpoint: {{ internal_dns }}:6443
+controllerManager: {}
+dns:
+  type: CoreDNS
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.8.0.0/16
+  serviceSubnet: 10.9.0.0/16
+scheduler: {}

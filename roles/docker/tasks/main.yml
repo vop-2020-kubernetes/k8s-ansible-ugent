@@ -1,0 +1,6 @@
+---
+- name: Copy install script
+  copy: src=files/container-runtime.sh dest=/tmp/container-runtime.sh mode="0755"
+
+- name: Install container-runtime
+  shell: /tmp/container-runtime.sh

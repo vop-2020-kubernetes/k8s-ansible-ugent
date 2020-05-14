@@ -1,0 +1,17 @@
+
+- name: Install pacemaker
+  apt: name=pacemaker state=latest
+
+- name: Install corosync
+  apt: name=corosync state=latest
+
+- name: Install crmsh
+  apt: name=crmsh state=latest
+
+
+- name: Enable ipv4 nonlocal bind
+  sysctl:
+    name: "net.ipv4.ip_nonlocal_bind"
+    value: "1"
+    state: present
+

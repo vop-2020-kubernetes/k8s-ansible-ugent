@@ -1,0 +1,33 @@
+# https://doc.ilabt.imec.be/ilabt/advanced/createimagefromscratch.html
+
+- name: set grub timeout to 1 in /etc/default/grub
+  replace: dest=/etc/default/grub regexp="^(GRUB_TIMEOUT)=[0-9]*$" replace="\1=1"
+  ignore_errors: yes
+  
+- name: Check if cmdline options are present
+  shell: grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -c "quiet nomodeset noresume"
+  register: noresume_status
+  ignore_errors: true
+
+- name: Update linux cmdline options
+  lineinfile: dest="/etc/default/grub" regexp='GRUB_CMDLINE_LINUX="(.*)"' line='GRUB_CMDLINE_LINUX="quiet nomodeset noresume"' backrefs=yes
+  when: noresume_status.stdout == "0"
+
+- name: Install grub on partition
+  shell: grub-install /dev/sda1 --force
+  when: noresume_status.stdout == "0"
+
+- name: Disable RESUME initramfs
+  file:
+    path: /etc/initramfs-tools/conf.d/resume
+    state: absent
+  when: noresume_status.stdout == "0"
+
+- name: update-initramfs
+  command: update-initramfs -u -k all
+  when: noresume_status.stdout == "0"
+
+- name: update-grub
+  shell: update-grub
+  when: noresume_status.stdout == "0"
+

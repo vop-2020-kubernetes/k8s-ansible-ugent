@@ -1,0 +1,22 @@
+---
+
+- name: Copy install script
+  copy: src=files/resize_root.sh dest=/tmp/resize_root.sh mode="0755"
+
+- name: Resize root
+  shell: /tmp/resize_root.sh
+
+- name: partprobe
+  command: partprobe
+
+- name: resize sda1
+  command: resize2fs /dev/sda1
+
+- name: wipe sda2
+  command: wipefs -a /dev/sda2
+
+- name: mkswap sda3
+  command: mkswap /dev/sda3
+
+- name: wipe sda4
+  command: wipefs -a /dev/sda4

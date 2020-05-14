@@ -1,0 +1,96 @@
+<?xml version='1.0'?>
+<rspec xmlns="http://www.geni.net/resources/rspec/3" type="request" generated_by="jFed RSpec Editor" generated="2020-04-06T12:39:17.550+02:00" xmlns:emulab="http://www.protogeni.net/resources/rspec/ext/emulab/1" xmlns:delay="http://www.protogeni.net/resources/rspec/ext/delay/1" xmlns:jfed-command="http://jfed.iminds.be/rspec/ext/jfed-command/1" xmlns:client="http://www.protogeni.net/resources/rspec/ext/client/1" xmlns:jfed-ssh-keys="http://jfed.iminds.be/rspec/ext/jfed-ssh-keys/1" xmlns:jfed="http://jfed.iminds.be/rspec/ext/jfed/1" xmlns:sharedvlan="http://www.protogeni.net/resources/rspec/ext/shared-vlan/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.geni.net/resources/rspec/3 http://www.geni.net/resources/rspec/3/request.xsd ">
+  <emulab:routable_pool client_id="public_pool" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm" count="3" type="any" x="158.5" y="82.5"/>
+  <node client_id="node1" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="196.0" y="243.5"/>
+    <interface client_id="node1:private">
+      <ip address="192.168.0.1" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node2" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="253.0" y="151.5"/>
+    <interface client_id="node2:private">
+      <ip address="192.168.0.2" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node3" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="398.0" y="97.5"/>
+    <interface client_id="node3:private">
+      <ip address="192.168.0.3" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node4" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="549.0" y="151.5"/>
+    <interface client_id="node4:private">
+      <ip address="192.168.0.4" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node5" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="637.0" y="241.5"/>
+    <interface client_id="node5:private">
+      <ip address="192.168.0.5" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node6" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="549.0" y="329.5"/>
+    <interface client_id="node6:private">
+      <ip address="192.168.0.6" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node7" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="400.0" y="396.5"/>
+    <interface client_id="node7:private">
+      <ip address="192.168.0.7" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <node client_id="node8" exclusive="true" component_manager_id="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm">
+    <sliver_type name="raw-pc">
+      <disk_image name="urn:publicid:IDN+wall2.ilabt.iminds.be+image+emulab-ops:UBUNTU18-64-STD"/>
+    </sliver_type>
+    <hardware_type name="pcgen03-2p"/>
+    <location xmlns="http://jfed.iminds.be/rspec/ext/jfed/1" x="256.0" y="330.5"/>
+    <interface client_id="node8:private">
+      <ip address="192.168.0.8" netmask="255.255.255.0" type="ipv4"/>
+    </interface>
+  </node>
+  <link client_id="private_link">
+    <component_manager name="urn:publicid:IDN+wall2.ilabt.iminds.be+authority+cm"/>
+    <interface_ref client_id="node1:private"/>
+    <interface_ref client_id="node2:private"/>
+    <interface_ref client_id="node3:private"/>
+    <interface_ref client_id="node4:private"/>
+    <interface_ref client_id="node5:private"/>
+    <interface_ref client_id="node6:private"/>
+    <interface_ref client_id="node7:private"/>
+    <interface_ref client_id="node8:private"/>
+    <link_type name="lan"/>
+  </link>
+</rspec>

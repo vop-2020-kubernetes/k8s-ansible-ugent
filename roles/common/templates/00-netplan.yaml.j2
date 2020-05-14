@@ -1,0 +1,46 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+network:
+  ethernets:
+  {% for name, eth in ethernets.items() %}
+    {{ name }}:
+      {% if eth.enable_dhcp is defined and eth.enable_dhcp %}
+      accept-ra: true
+      dhcp4: true
+      dhcp4-overrides:
+        route-metric: 100
+      dhcp6: true
+      dhcp6-overrides:
+        route-metric: 100
+      {% endif %}
+      {% if eth.routes is defined %}
+      routes:
+{{ eth.routes | to_nice_yaml | indent(8, True) }}
+      {% endif %}
+      {% if eth.addresses is defined %}
+      addresses:
+{{ eth.addresses | to_nice_yaml | indent(8, True) }}
+      {% endif %}
+      match:
+        macaddress: {{ interfaces[name] }}
+      set-name: {{ name }}
+  {% endfor %}
+  {% if vlans is defined %}
+  vlans:
+  {% for name, vlan in vlans.items() %}
+    {{ name }}:
+      id: {{ vlan.id }}
+      link: {{ vlan.link }}
+      {% if vlan.addresses is defined %}
+      addresses:
+{{ vlan.addresses | to_nice_yaml |indent(8, True) }}
+      {% elif vlan.address_pools is defined %}
+      addresses:
+      {% for pool in vlan.address_pools %}
+      - {{ ip_pools[pool.name][pool.index]["ip"] }}/{{ ip_pools[pool.name][pool.index]["sub"] }}
+      {% endfor %}
+      {% endif %}
+  {% endfor %}
+  {% endif %}
+  renderer: networkd
+  version: 2

@@ -1,0 +1,137 @@
+all:
+  vars:
+    ansible_user: 'root'
+    ansible_become: yes
+    ansible_become_method: sudo
+    ansible_python_interpreter: '/usr/bin/env python3'
+    ansible_ssh_private_key_file: ~/.ssh/cluster0.key
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  children:
+    hacluster:
+      vars:
+        ha_bind_addr: 192.168.0.255
+        ha_ips:
+          private:
+            cidr: 26
+            addr:
+            - 192.168.0.101
+            - 192.168.0.102
+            - 192.168.0.103
+          public:
+            pool_name: public_pool
+            gateway: 193.190.127.193
+        ha_nodes:
+        - id: 1
+          addr: 192.168.0.1
+        - id: 2
+          addr: 192.168.0.2
+        - id: 3
+          addr: 192.168.0.3
+      hosts:
+        node1.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+        node2.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+        node3.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+    master:
+      hosts:
+        node1.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.1/24
+          vlans:
+            public:
+              id: 29
+              link: management
+        node2.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.2/24
+          vlans:
+            public:
+              id: 29
+              link: management
+        node3.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.3/24
+          vlans:
+            public:
+              id: 29
+              link: management
+    slave:
+      hosts:
+        node4.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.4/24
+        node5.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.5/24
+        node6.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.6/24
+        node7.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.7/24
+        node8.cluster0.ilabt-imec-be.wall2.ilabt.iminds.be:
+          ethernets:
+            management:
+              enable_dhcp: true
+              routes:
+              - to: 0.0.0.0/0
+                via: 10.2.47.253
+                metric: 10
+            private:
+              addresses:
+               - 192.168.0.8/24

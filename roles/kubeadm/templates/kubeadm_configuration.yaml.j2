@@ -1,0 +1,18 @@
+{% include 'cluster_configuration.yaml.j2' %}
+{% if inventory_hostname == groups["master"][0] %}
+
+---
+
+{% include 'init_configuration.yaml.j2' %}
+{% else %}
+
+---
+
+{% include 'join_configuration.yaml.j2' %}
+{% endif %}
+{% if inventory_hostname in groups["master"] %}
+
+---
+
+{% include 'master_configuration.yaml.j2' %}
+{% endif %}

@@ -1,0 +1,115 @@
+- name: Template kubeadm_configuration.yaml
+  template: src=kubeadm_configuration.yaml.j2 dest=/tmp/kubeadm_configuration.yaml
+  vars:
+    is_master: "{{ inventory_hostname in groups['master'] }}"
+    internal_dns: "int.c0.kube8.ga"
+    external_dns: "api.c0.kube8.ga"
+    node_ip: "{{ ethernets.private.addresses[0].split('/')[0] }}"
+    node_hostname: "{{ inventory_hostname }}"
+
+- name: Run kuneamd reset
+  command: kubeadm reset -f
+  ignore_errors: yes
+
+- name: Stop service kubelet
+  service:
+    name: kubelet
+    state: stopped
+  ignore_errors: yes
+
+- name: Stop service docker
+  service:
+    name: docker
+    state: stopped
+  ignore_errors: yes
+
+- name: Remove kubernetes config
+  file:
+    path: /etc/cni
+    state: absent
+  ignore_errors: yes
+
+- name: Remove config
+  file:
+    path: /etc/kubernetes
+    state: absent
+  ignore_errors: yes
+
+- name: Remove kubernetes config
+  file:
+    path: /var/lib/cni
+    state: absent
+  ignore_errors: yes
+
+- name: Remove config
+  file:
+    path: /var/lib/kubelet
+    state: absent
+  ignore_errors: yes
+
+- name: Remove rook
+  file:
+    path: /var/lib/rook
+    state: absent
+  ignore_errors: yes
+
+- name: Remove rook data
+  command: ls /dev/mapper/ceph-* | xargs -I% -- dmsetup remove %
+  ignore_errors: yes
+
+- name: Remove rook dev
+  command: rm -rf /dev/ceph-*
+  ignore_errors: yes
+
+- name: bring down ifaces
+  shell: "ip link delete {{ item }}"
+  with_items:
+   - cni0
+   - flannel.1
+   - docker0
+  ignore_errors: yes
+
+- name: start docker
+  service:
+    name: docker
+    state: started
+
+- name: Run kubeadm init
+  command: kubeadm init --config=/tmp/kubeadm_configuration.yaml
+  when: (inventory_hostname == groups['master'][0])
+
+- name: Copy files to local
+  no_log: true
+  fetch:
+    src: "{{ item }}"
+    dest: "fetch"
+  with_items:
+   - /etc/kubernetes/pki/ca.crt
+   - /etc/kubernetes/pki/ca.key
+   - /etc/kubernetes/pki/sa.pub
+   - /etc/kubernetes/pki/sa.key
+   - /etc/kubernetes/pki/front-proxy-ca.crt
+   - /etc/kubernetes/pki/front-proxy-ca.key
+   - /etc/kubernetes/pki/etcd/ca.crt
+   - /etc/kubernetes/pki/etcd/ca.key
+  when:
+    - inventory_hostname == groups['master'][0]
+
+- name: Copy files from local
+  no_log: true
+  copy:
+    src: "fetch/{{ groups['master'][0] }}/"
+    dest: "/"
+  when:
+    - inventory_hostname != groups['master'][0]
+    - inventory_hostname in groups['master']
+
+- name: Join master nodes
+  command: kubeadm join --config=/tmp/kubeadm_configuration.yaml
+  when:
+    - inventory_hostname != groups['master'][0]
+    - inventory_hostname in groups['master']
+
+- name: Join worker nodes
+  command: kubeadm join --config=/tmp/kubeadm_configuration.yaml
+  when: (inventory_hostname not in groups['master'])

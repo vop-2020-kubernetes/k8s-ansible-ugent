@@ -1,0 +1,24 @@
+- name: Configure networking
+  import_tasks: networking.yml
+
+- name: Disable swap
+  import_tasks: swap.yml
+
+- name: Get disk list
+  shell: df -h | grep ^/dev/sda1 | grep -c "50G"
+  register: has_ext
+  ignore_errors: true
+
+- name: Resize disks
+  import_tasks: disk.yml
+  when: has_ext.stdout == "0"
+
+- name: Update grub
+  import_tasks: grub.yml
+
+- name: reboot
+  reboot:
+    reboot_timeout: 200
+
+- name: Update Node
+  import_tasks: update.yml

@@ -1,0 +1,61 @@
+- name: Update netplan
+  apt:
+    update_cache: true
+    name: netplan.io
+    state: latest
+
+- name: Copy cluster_info.py
+  copy: src=files/cluster_info.py dest=/tmp/cluster_info.py
+
+- name: Get cluster info - ip pools
+  command: python3 /tmp/cluster_info.py pub_ip_pools
+  register: ip_pools_raw
+
+- name: Get cluster info - interfaces
+  command: python3 /tmp/cluster_info.py interfaces
+  register: interface_mac_raw
+
+- name: Get full hostname
+  command: python3 /tmp/cluster_info.py full_hostname
+  register: full_hostname_raw
+
+- name: Set ip pools fact
+  set_fact:
+    ip_pools: "{{ ip_pools_raw.stdout | from_json }}"
+
+- name: Set full hostname
+  script: files/sethostname.sh {{ hostname }}
+  vars:
+    hostname: "{{ full_hostname_raw.stdout }}"
+
+- name: Configuring Netplan
+  template:
+    src: 00-netplan.yaml.j2
+    dest: /etc/netplan/00-netplan.yaml
+  vars:
+    interfaces: "{{ interface_mac_raw.stdout | from_json }}"
+  become: true
+
+- name: Remove udev
+  file:
+    path: /etc/udev/rules.d/99-emulab-networkd.rules
+    state: absent
+
+- name: Remove systemd network
+  command: rm -rf /run/systemd/network/*
+
+- name: Generate netplan config
+  command: netplan generate
+
+- name: Apply netplan config
+  command: netplan apply
+
+- name: Check if renamed
+  command: cat /sys/class/net/management/operstate
+  register: renamed
+  ignore_errors: yes
+
+- name: Update initramfs for iface namechanges to be effictive
+  command: update-initramfs -u -k all
+  when: 'renamed.rc != 0'
+

@@ -1,0 +1,9 @@
+---
+- name: Copy install script
+  copy: src=files/kubeadm-install.sh dest=/tmp/kubeadm-install.sh mode="0755"
+
+- name: Install kubeadm
+  shell: /tmp/kubeadm-install.sh
+
+- name: Configure kubeadm
+  import_tasks: configure.yml
